@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #if defined(APE)
 // Actually Portable Executable
@@ -44,7 +45,7 @@
 #          include <Security/Security.h>
 #      endif
 #  else
-#      include <sys/random.h>
+#      include </opt/mpss/3.8.6/sysroots/k1om-mpss-linux/usr/include/linux/random.h>
 #  endif
 #  define HAS_IOVEC
 #elif defined(_WIN32)
@@ -61,6 +62,25 @@
 #  define write _write
 #  define close _close
 #endif
+
+ssize_t
+getrandom (void *buffer, size_t length, unsigned int flags)
+{
+  int randomData = open("/dev/urandom", O_RDONLY);
+  if (randomData < 0)
+  {
+    return NULL;
+  }
+  else
+  {
+    ssize_t result = read(randomData, buffer, length);
+    return result;
+    if (result < 0)
+    {
+        return NULL;
+    }
+  }
+}
 
 static m3_wasi_context_t* wasi_context;
 
